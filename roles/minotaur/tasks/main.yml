@@ -73,3 +73,11 @@
     owner: miner
     group: miner
     mode: 0755
+
+- name: gs wrapper script
+  copy:
+    src: gs.sh
+    dest: /home/miner/gs.sh
+    owner: miner
+    group: miner
+    mode: 0755
