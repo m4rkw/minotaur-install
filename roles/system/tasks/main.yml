@@ -1,0 +1,64 @@
+---
+- name: install epel
+  yum:
+    name: epel-release
+    state: present
+
+- name: install packages
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+  - vim-enhanced
+  - pv
+  - wget
+  - lynx
+  - telnet
+  - kernel-headers
+  - xorg-x11-server-Xorg
+  - gdm
+  - alien
+  - dkms
+  - screen
+  - pciutils
+
+- name: yum update
+  yum:
+    name: '*'
+    state: latest
+
+- name: create hugetlb group
+  group:
+    name: hugetlb
+    state: present
+
+- name: create miner group
+  group:
+    name: miner
+    state: present
+
+- name: create miner user
+  user:
+    name: miner
+    shell: /bin/bash
+    state: present
+    group: miner
+    groups:
+    - hugetlb
+    - video
+
+- name: copy boot setup script
+  copy:
+    src: boot-setup.py
+    dest: /root/boot-setup.py
+    owner: root
+    group: root
+    mode: 0755
+
+- name: run boot setup script
+  shell: /root/boot-setup.py
+
+- name: set boot setup in rc.local
+  lineinfile:
+    dest: /etc/rc.local
+    line: "/etc/miner-startup.sh &"

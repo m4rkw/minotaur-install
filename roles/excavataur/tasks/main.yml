@@ -1,0 +1,51 @@
+---
+- name: look up latest excavataur release
+  shell: /bin/curl -si 'https://github.com/m4rkw/excavataur/releases/latest' |egrep '^Location:' |cut -d '/' -f8 |cut -d 'v' -f2
+  register: latest_excavataur
+
+- name: see if we have excavataur installed
+  stat:
+    path: /usr/local/bin/excavataur
+  register: st
+
+- name: get the excavataur version if installed
+  shell: /usr/local/bin/excavataur |egrep '\/ excavataur' |cut -d ' ' -f4
+  register: excavataur_version
+
+- name: download excavataur
+  get_url:
+    url: "https://github.com/m4rkw/excavataur/releases/download/v{{ latest_excavataur.stdout }}/excavataur-{{ latest_excavataur.stdout }}_centos7.tar.gz"
+    dest: "/root/excavataur-{{ latest_excavataur.stdout }}_centos7.tar.gz"
+  when: st.stat.exists == false or latest_excavataur.stdout != excavataur_version.stdout
+
+- name: unpack excavataur
+  shell: "/bin/tar -zxvf /root/excavataur-{{ latest_excavataur.stdout }}_centos7.tar.gz"
+  args:
+    chdir: /root
+  when: st.stat.exists == false or latest_excavataur.stdout != excavataur_version.stdout
+
+- name: install excavataur
+  copy:
+    src: "/root/excavataur-{{ latest_excavataur.stdout }}/excavataur"
+    dest: /usr/local/bin/excavataur
+    owner: root
+    group: root
+    mode: 0755
+    remote_src: true
+  when: st.stat.exists == false or latest_excavataur.stdout != excavataur_version.stdout
+
+- name: install excavataur config
+  copy:
+    src: excavataur.conf
+    dest: /etc/excavataur
+    owner: root
+    group: root
+    mode: 0644
+
+- name: install wrapper
+  copy:
+    src: excavataur.sh
+    dest: /home/miner/excavataur.sh
+    owner: miner
+    group: miner
+    mode: 0755

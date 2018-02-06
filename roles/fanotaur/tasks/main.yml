@@ -1,0 +1,51 @@
+---
+- name: look up latest fanotaur release
+  shell: /bin/curl -si 'https://github.com/m4rkw/fanotaur/releases/latest' |egrep '^Location:' |cut -d '/' -f8 |cut -d 'v' -f2
+  register: latest_fanotaur
+
+- name: see if we have fanotaur installed
+  stat:
+    path: /usr/bin/fanotaur
+  register: st
+
+- name: get the fanotaur version if installed
+  shell: /usr/bin/fanotaur |egrep '\/ fanotaur' |cut -d ' ' -f4
+  register: fanotaur_version
+
+- name: download fanotaur
+  get_url:
+    url: "https://github.com/m4rkw/fanotaur/releases/download/v{{ latest_fanotaur.stdout }}/fanotaur-{{ latest_fanotaur.stdout }}.tar.gz"
+    dest: "/root/fanotaur-{{ latest_fanotaur.stdout }}.tar.gz"
+  when: st.stat.exists == false or latest_fanotaur.stdout != fanotaur_version.stdout
+
+- name: unpack fanotaur
+  shell: "/bin/tar -zxvf /root/fanotaur-{{ latest_fanotaur.stdout }}.tar.gz"
+  args:
+    chdir: /root
+  when: st.stat.exists == false or latest_fanotaur.stdout != fanotaur_version.stdout
+
+- name: install fanotaur
+  copy:
+    src: "/root/fanotaur-{{ latest_fanotaur.stdout }}/fanotaur"
+    dest: /usr/local/bin/fanotaur
+    owner: root
+    group: root
+    mode: 0755
+    remote_src: true
+  when: st.stat.exists == false or latest_fanotaur.stdout != fanotaur_version.stdout
+
+- name: install wrapper
+  copy:
+    src: fanotaur.sh
+    dest: /home/miner/fanotaur.sh
+    owner: miner
+    group: miner
+    mode: 0755
+
+- name: fanotaur config
+  copy:
+    src: fanotaur.conf
+    dest: /etc/fanotaur.conf
+    owner: root
+    group: root
+    mode: 0644

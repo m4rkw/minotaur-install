@@ -1,0 +1,59 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          minotaur
+# Required-Start:    $remote_fs $network $syslog $time
+# Required-Stop:     $remote_fs $syslog
+# Should-Start:      $local_fs
+# Should-Stop:       $local_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start minotaur
+# Description:       Starts the minotaur server
+### END INIT INFO
+# GPL Licensed
+
+NAME="minotaur"
+USER="miner"
+XCAVATORPID="/var/run/minotaur.pid"
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+# Define LSB log_* functions (status_of_proc)
+. /lib/lsb/init-functions
+
+if [ -f "$XCAVATORPID" ]; then
+        XCAVATORPIDN=`cat "$XCAVATORPID" 2> /dev/null`
+fi
+
+start_minotaur()
+{
+  start-stop-daemon --start --quiet --oknodo --background --chuid $USER --make-pidfile --pidfile "$XCAVATORPID" --exec "/usr/bin/screen" -- -dmS minotaur /home/miner/minotaur/minotaur.sh
+}
+
+stop_minotaur()
+{
+        start-stop-daemon --stop --quiet --pidfile "$XCAVATORPID" > /dev/null 2> /dev/null
+        rm -f "$XCAVATORPID"
+        killall -u miner
+        return 0
+}
+
+case "$1" in
+  start)
+        echo -n "Starting minotaur..."
+        start_minotaur && echo "done."
+        ;;
+  stop)
+        echo -n "Stopping minotaur... "
+        stop_minotaur && echo "done."
+        ;;
+  status)
+  status_of_proc "$RACK" "$NAME" && exit 0 || exit $?
+   ;;
+  restart)
+        $0 stop_minotaur
+        $0 start_minotaur
+        ;;
+  *)
+        echo "Usage: $0 {start|stop|status|restart|reload}"
+        exit 1
+esac

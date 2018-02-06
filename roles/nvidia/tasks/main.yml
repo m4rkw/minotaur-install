@@ -1,0 +1,18 @@
+---
+- name: install packages
+  yum:
+    name: "http://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/{{ item }}"
+    state: present
+  with_items:
+  - cuda-repo-rhel7-9.0.176-1.x86_64.rpm
+  - nvidia-kmod-387.26-2.el7.x86_64.rpm
+  - cuda-drivers-387.26-1.x86_64.rpm
+  - xorg-x11-drv-nvidia-387.26-1.el7.x86_64.rpm
+  - xorg-x11-drv-nvidia-devel-387.26-1.el7.x86_64.rpm
+  - xorg-x11-drv-nvidia-gl-387.26-1.el7.x86_64.rpm
+  - xorg-x11-drv-nvidia-libs-387.26-1.el7.x86_64.rpm
+
+- name: disable nvidia package updates
+  lineinfile:
+    dest: /etc/yum.conf
+    line: "exclude=nvidia-kmod,xorg-x11-drv-nvidia-*,cuda-drivers-*"

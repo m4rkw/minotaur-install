@@ -1,0 +1,11 @@
+---
+- name: copy xorg-setup.py
+  copy:
+    src: xorg-setup.py
+    dest: /root/xorg-setup.py
+    owner: root
+    group: root
+    mode: 0755
+
+- name: run xorg-setup.py
+  shell: /root/xorg-setup.py

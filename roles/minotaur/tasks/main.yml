@@ -1,0 +1,75 @@
+---
+- name: look up latest minotaur release
+  shell: /bin/curl -si 'https://github.com/m4rkw/minotaur/releases/latest' |egrep '^Location:' |cut -d '/' -f8 |cut -d 'v' -f2
+  register: latest_minotaur
+
+- name: see if we have minotaur installed
+  stat:
+    path: /usr/bin/minotaur
+  register: st
+
+- name: get the minotaur version if installed
+  shell: /usr/bin/minotaur |egrep '\/ minotaur' |cut -d ' ' -f4
+  register: minotaur_version
+
+- name: download minotaur
+  get_url:
+    url: "https://github.com/m4rkw/minotaur/releases/download/v{{ latest_minotaur.stdout }}/minotaur-{{ latest_minotaur.stdout }}_centos7.tar.gz"
+    dest: "/root/minotaur-{{ latest_minotaur.stdout }}_centos7.tar.gz"
+  when: st.stat.exists == false or latest_minotaur.stdout != minotaur_version.stdout
+
+- name: unpack minotaur
+  shell: "/bin/tar -zxvf /root/minotaur-{{ latest_minotaur.stdout }}_centos7.tar.gz"
+  args:
+    chdir: /root
+  when: st.stat.exists == false or latest_minotaur.stdout != minotaur_version.stdout
+
+- name: install minotaur
+  copy:
+    src: "/root/minotaur-{{ latest_minotaur.stdout }}/minotaur"
+    dest: /usr/local/bin/minotaur
+    owner: root
+    group: root
+    mode: 0755
+    remote_src: true
+  when: st.stat.exists == false or latest_minotaur.stdout != minotaur_version.stdout
+
+- name: create miner group
+  group:
+    name: miner
+    state: present
+
+- name: create miner user
+  user:
+    name: miner
+    state: present
+    group: miner
+    shell: /bin/bash
+
+- name: create the minotaur directories
+  file:
+    path: "{{ item }}"
+    owner: miner
+    group: miner
+    state: directory
+    mode: 0755
+  with_items:
+  - /var/log/minotaur
+  - /var/run/minotaur
+  - /home/miner/.minotaur
+
+- name: copy minotaur config
+  copy:
+    src: minotaur.conf
+    dest: /etc/minotaur.conf
+    owner: miner
+    group: miner
+    mode: 0644
+
+- name: wrapper script
+  copy:
+    src: minotaur.sh
+    dest: /home/miner/minotaur.sh
+    owner: miner
+    group: miner
+    mode: 0755

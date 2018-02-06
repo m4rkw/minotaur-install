@@ -1,0 +1,44 @@
+---
+- name: look up latest xenial excavator deb
+  shell: "/usr/bin/curl -si 'https://github.com/nicehash/excavator/releases' |egrep 'a.*?href.*?xenial.*?deb' |head -n1 |cut -d '\"' -f2"
+  register: excavator_deb
+
+- name: get deb version
+  shell: "/bin/echo \"{{ excavator_deb.stdout }}\" |cut -d '/' -f6 |cut -d 'v' -f2"
+  register: excavator_latest_version
+
+- name: see if we already have excavator installed
+  stat:
+    path: /opt/excavator/bin/excavator
+  register: excavator_stat
+
+- name: get the excavator version if installed
+  shell: /opt/excavator/bin/excavator -h |grep 'GPU Miner for NiceHash' |head -n1 |xargs |cut -d ' ' -f2 |cut -d '_' -f1 |cut -d 'v' -f2
+  register: excavator_installed_version
+  when: excavator_stat.stat.exists == true
+
+- name: download excavator
+  shell: "/bin/curl -o /root/excavator-{{ excavator_latest_version.stdout }}-1.el7.centos.x86_64.rpm http://ftp.redsleeve.org/pub/misc/mining/RPMS/excavator-{{ excavator_latest_version.stdout }}-1.el7.centos.x86_64.rpm"
+  when: excavator_stat.stat.exists == false or excavator_latest_version.stdout != excavator_installed_version.stdout
+
+- name: create /opt/excavator
+  file:
+    path: /opt/excavator
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: install excavator
+  yum:
+    name: "/root/excavator-{{ excavator_latest_version.stdout }}-1.el7.centos.x86_64.rpm"
+    state: present
+  when: excavator_stat.stat.exists == false or excavator_latest_version.stdout != excavator_installed_version.stdout
+
+- name: install wrapper
+  copy:
+    src: excavator.sh
+    dest: /home/miner/excavator.sh
+    owner: miner
+    group: miner
+    mode: 0755
