@@ -9,3 +9,4 @@
 
 - name: run xorg-setup.py
   shell: /root/xorg-setup.py
+  ignore_errors: true
