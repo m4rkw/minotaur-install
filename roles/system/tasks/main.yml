@@ -62,3 +62,11 @@
   lineinfile:
     dest: /etc/rc.local
     line: "/etc/miner-startup.sh &"
+
+- name: activate rc.local
+  file:
+    path: /etc/rc.d/rc.local
+    state: touch
+    owner: root
+    group: root
+    mode: 0755
