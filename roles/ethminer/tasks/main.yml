@@ -1,0 +1,19 @@
+---
+- name: download ethminer
+  get_url:
+    url: https://github.com/ethereum-mining/ethminer/releases/download/v0.14.0.dev1/ethminer-0.14.0.dev1-Linux.tar.gz
+    dest: /root/ethminer-0.14.0.dev1-Linux.tar.gz
+
+- name: extract ethminer
+  shell: /bin/tar zxvf /root/ethminer-0.14.0.dev1-Linux.tar.gz
+  args:
+    chdir: /root
+
+- name: install ethminer
+  copy:
+    src: /root/bin/ethminer
+    dest: /usr/local/bin/ethminer
+    owner: root
+    group: root
+    mode: 0755
+    remote_src: true
