@@ -29,6 +29,6 @@ with open("/etc/miner-startup.sh","w") as f:
   f.write("mkdir /var/run/excavataur\n")
   f.write("chown miner:miner /var/run/excavataur\n")
   f.write("/usr/bin/sudo -u miner /usr/bin/screen -dmS exv /home/miner/excavataur.sh\n")
-  f.write("/usr/bin/sudo -u miner /usr/bin/screen -dmS fan /home/miner/fan.sh\n")
+  f.write("/usr/bin/sudo -u miner /usr/bin/screen -dmS fan /home/miner/fanotaur.sh\n")
   f.write("/usr/bin/sudo -u miner /usr/bin/screen -dmS min /home/miner/minotaur.sh\n")
   f.write("/usr/bin/sudo -u miner /usr/bin/screen -dmS gs /home/miner/gs.sh\n")
