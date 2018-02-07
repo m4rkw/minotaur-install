@@ -12,6 +12,10 @@ and miners: excavator, ccminer, ccminer2 and ethminer.
 
 All will run on startup. You should adjust the configuration to your needs.
 
+NOTE: It is highly recommended to start with a fresh **minimal** Centos 7
+installation. If you start with any other state this may not work or may
+produce unexpected results.
+
 ## Usage
 
 ````
