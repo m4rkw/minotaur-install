@@ -15,7 +15,7 @@ All will run on startup. You should adjust the configuration to your needs.
 ## Usage
 
 ````
-curl https://rkw.io/minotaur | bash
+curl rkw.io/minotaur | sudo bash
 ````
 
 Then reboot the system.
