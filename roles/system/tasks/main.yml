@@ -63,6 +63,14 @@
     dest: /etc/rc.local
     line: "/etc/miner-startup.sh &"
 
+- name: make miner-startup.sh executable
+  file:
+    path: /etc/miner-startup.sh
+    state: touch
+    owner: root
+    group: root
+    mode: 0755
+
 - name: activate rc.local
   file:
     path: /etc/rc.d/rc.local
