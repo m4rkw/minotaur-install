@@ -18,6 +18,24 @@ All will run on startup. You should adjust the configuration to your needs.
 curl https://rkw.io/minotaur | bash
 ````
 
+Then reboot the system.
+
+This will deploy:
+
+- xorg with appropriate config for all Nvidia devices on the system
+- a "miner" user to run the applications with
+- fanotaur - starting on boot
+- excavator - starting on boot
+- excavataur - starting on boot
+- ccminer
+- ccminer2
+- ethminer
+- gs display for minotaur - starting on boot
+
+minotaur itself will not start on boot but you can change this by uncommenting
+the line for it in /etc/rc.local. First you will probably want to do some
+calibration though - see the README in the minotaur project for details.
+
 ## Disclaimer
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
