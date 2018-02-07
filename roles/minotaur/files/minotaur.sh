@@ -1,5 +1,5 @@
 #!/bin/bash
 while :
 do
-  /usr/local/bin/minotaur
+  /usr/local/bin/minotaur --mine
 done
