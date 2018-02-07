@@ -78,3 +78,6 @@
     owner: root
     group: root
     mode: 0755
+
+- name: enable gdm graphical target
+  shell: /bin/systemctl set-default graphical.target
