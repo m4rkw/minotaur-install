@@ -36,6 +36,27 @@ minotaur itself will not start on boot but you can change this by uncommenting
 the line for it in /etc/rc.local. First you will probably want to do some
 calibration though - see the README in the minotaur project for details.
 
+All of the startup applications will run in screen sessions owned by the miner
+user. You should run minotaur as the miner user, eg:
+
+````
+sudo su miner
+````
+
+then you can see the list of screen sessions with:
+
+````
+screen -list
+````
+
+jump into one with -r, eg to see the gs display:
+
+````
+screen -r gs
+````
+
+to exit from a screen session press ctrl-a and then d.
+
 ## Disclaimer
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
