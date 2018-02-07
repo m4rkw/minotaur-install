@@ -49,3 +49,11 @@
     owner: root
     group: root
     mode: 0644
+
+- name: create log directory
+  file:
+    path: /var/log/fanotaur
+    owner: miner
+    group: miner
+    mode: 0755
+    state: directory

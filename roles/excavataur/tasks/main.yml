@@ -49,3 +49,11 @@
     owner: miner
     group: miner
     mode: 0755
+
+- name: create log directory
+  file:
+    path: /var/log/excavataur
+    owner: miner
+    group: miner
+    mode: 0755
+    state: directory
