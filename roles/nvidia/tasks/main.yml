@@ -17,3 +17,11 @@
   lineinfile:
     dest: /etc/yum.conf
     line: "exclude=nvidia-kmod,xorg-x11-drv-nvidia-*,cuda-drivers-*"
+
+- name: make nvidia-smi +s
+  file:
+    path: /bin/nvidia-smi
+    owner: root
+    group: root
+    mode: 4755
+    state: touch
