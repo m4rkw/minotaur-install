@@ -11,7 +11,7 @@
   - xorg-x11-drv-nvidia-devel-387.26-1.el7.x86_64.rpm
   - xorg-x11-drv-nvidia-gl-387.26-1.el7.x86_64.rpm
   - xorg-x11-drv-nvidia-libs-387.26-1.el7.x86_64.rpm
-  - xorg-x11-drv-evdev
+#  - xorg-x11-drv-evdev
 
 - name: disable nvidia package updates
   lineinfile:
