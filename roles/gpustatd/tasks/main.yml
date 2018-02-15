@@ -1,0 +1,59 @@
+---
+- name: look up latest gpustatd release
+  shell: /bin/curl -si 'https://github.com/m4rkw/gpustatd/releases/latest' |egrep '^Location:' |cut -d '/' -f8 |cut -d 'v' -f2
+  register: latest_gpustatd
+
+- name: see if we have gpustatd installed
+  stat:
+    path: /usr/bin/gpustatd
+  register: st
+
+- name: get the gpustatd version if installed
+  shell: /usr/bin/gpustatd |egrep '\/ gpustatd' |cut -d ' ' -f4
+  register: gpustatd_version
+
+- name: download gpustatd
+  get_url:
+    url: "https://github.com/m4rkw/gpustatd/releases/download/v{{ latest_gpustatd.stdout }}/gpustatd-{{ latest_gpustatd.stdout }}.tar.gz"
+    dest: "/root/gpustatd-{{ latest_gpustatd.stdout }}.tar.gz"
+  when: st.stat.exists == false or latest_gpustatd.stdout != gpustatd_version.stdout
+
+- name: unpack gpustatd
+  shell: "/bin/tar -zxvf /root/gpustatd-{{ latest_gpustatd.stdout }}.tar.gz"
+  args:
+    chdir: /root
+  when: st.stat.exists == false or latest_gpustatd.stdout != gpustatd_version.stdout
+
+- name: install gpustatd
+  copy:
+    src: "/root/gpustatd-{{ latest_gpustatd.stdout }}/gpustatd"
+    dest: /usr/local/bin/gpustatd
+    owner: root
+    group: root
+    mode: 0755
+    remote_src: true
+  when: st.stat.exists == false or latest_gpustatd.stdout != gpustatd_version.stdout
+
+- name: install wrapper
+  copy:
+    src: gpustatd.sh
+    dest: /home/miner/gpustatd.sh
+    owner: miner
+    group: miner
+    mode: 0755
+
+- name: gpustatd config
+  copy:
+    src: gpustatd.conf
+    dest: /etc/gpustatd.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: create log directory
+  file:
+    path: /var/log/gpustatd
+    owner: miner
+    group: miner
+    mode: 0755
+    state: directory

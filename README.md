@@ -5,7 +5,7 @@
 From a minimal Centos 7 install, this will install:
 
 - Minotaur
-- Fanotaur
+- gpustatd
 - Excavataur
 
 and miners: excavator, ccminer, ccminer2 and ethminer.
@@ -28,7 +28,7 @@ This will deploy:
 
 - xorg with appropriate config for all Nvidia devices on the system
 - a "miner" user to run the applications with
-- fanotaur - starting on boot
+- gpustatd - starting on boot
 - excavator - starting on boot
 - excavataur - starting on boot
 - ccminer

@@ -1,5 +1,5 @@
 #!/bin/bash
 while :
 do
-  /usr/local/bin/fanotaur
+  /usr/local/bin/gpustatd
 done
